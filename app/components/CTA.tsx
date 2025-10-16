@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
+
 type Props = { href?: string };
 
 const fadeUp = {
@@ -17,7 +18,7 @@ function CtaParticles() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D | null;
     if (!ctx) return;
 
     let raf = 0 as number;
@@ -76,6 +77,7 @@ function CtaParticles() {
     };
 
     function step() {
+      if (!ctx) return;
       ctx.clearRect(0, 0, width, height);
 
       const MAX_D = Math.min(240, Math.max(140, Math.hypot(width, height) / 9));
