@@ -7,7 +7,7 @@ type Props = { href?: string };
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] } },
 };
 const container = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } };
 
