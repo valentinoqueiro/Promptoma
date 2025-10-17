@@ -19,6 +19,19 @@ const fromRight: Variants = {
   visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
 };
 
+/* --- Hook: detectar breakpoint md para render condicional --- */
+function useIsMdUp() {
+  const [isMd, setIsMd] = React.useState(false);
+  React.useEffect(() => {
+    const m = window.matchMedia("(min-width: 768px)");
+    const onChange = () => setIsMd(m.matches);
+    onChange();
+    m.addEventListener("change", onChange);
+    return () => m.removeEventListener("change", onChange);
+  }, []);
+  return isMd;
+}
+
 /* --- Typewriter para palabras del título --- */
 function Typewriter({
   words = ["Inteligente.", "Promptomatica.", "Predictiva.", "Escalable.", "Eficiente."],
@@ -274,6 +287,7 @@ type HeroProps = {
 };
 
 export default function Hero({ companyLogoUrl }: HeroProps) {
+  const isMd = useIsMdUp();
   return (
     <motion.section
       id="inicio"
@@ -284,50 +298,52 @@ export default function Hero({ companyLogoUrl }: HeroProps) {
       {/* Glow decorativo (lado derecho) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 right-[-10rem] h-[36rem] w-[36rem] rounded-full bg-violet-700/25 blur-3xl"
+        className="hidden md:block pointer-events-none absolute -top-40 right-[-10rem] h-[36rem] w-[36rem] rounded-full bg-violet-700/25 blur-3xl"
       />
 
-      <motion.div className="mx-auto max-w-7xl px-6 py-28 md:py-40" variants={container}>
+      <motion.div className="mx-auto max-w-7xl px-4 py-20 md:px-6 md:py-40" variants={container}>
         {/* Dos columnas: texto a la izquierda y estadísticas a la derecha */}
-        <div className="grid items-start gap-12 md:grid-cols-2">
+        <div className="grid items-start gap-8 md:gap-12 md:grid-cols-2">
           {/* Copy */}
-          <motion.div className="max-w-3xl" variants={fadeUp}>
-            <h1 className="text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl">
+          <motion.div className="mx-auto max-w-xl text-center md:max-w-3xl md:text-left" variants={fadeUp}>
+            <h1 className="text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl md:text-6xl">
               El futuro de tu negocio comienza con la Automatización <Typewriter />
             </h1>
 
-            <motion.p className="mt-6 text-lg text-gray-300 sm:text-xl" variants={fadeUp}>
+            <motion.p className="mt-6 text-base text-gray-300 sm:text-lg md:text-xl" variants={fadeUp}>
               Implementamos IA y automatizaciones que ahorran tiempo, reducen
               errores y multiplican resultados.
             </motion.p>
 
-            <motion.div className="mt-10 flex flex-col gap-4 sm:flex-row" variants={fadeUp}>
+            <motion.div className="mt-10 flex flex-col items-stretch justify-center gap-4 sm:flex-row sm:items-center sm:justify-start" variants={fadeUp}>
               <a
                 href="#demo"
-                className="inline-flex items-center justify-center rounded-xl bg-white/10 px-6 py-3 text-base font-semibold ring-1 ring-white/20 transition hover:bg-white/15"
+                className="inline-flex w-full items-center justify-center rounded-xl bg-white/10 px-6 py-3 text-base font-semibold ring-1 ring-white/20 transition hover:bg-white/15 sm:w-auto"
               >
                 Conocer más
               </a>
               <a
                 href="#contacto"
-                className="inline-flex items-center justify-center rounded-xl bg-violet-600 px-6 py-3 text-base font-semibold transition hover:bg-violet-500"
+                className="inline-flex w-full items-center justify-center rounded-xl bg-violet-600 px-6 py-3 text-base font-semibold transition hover:bg-violet-500 sm:w-auto"
               >
                 Agendar entrevista
               </a>
             </motion.div>
 
-            <motion.div className="mt-6 text-sm text-gray-400" variants={fadeUp}>
+            <motion.div className="mt-6 text-sm text-gray-400 text-center md:text-left" variants={fadeUp}>
               Sin costo de diagnóstico · Integración con Make y n8n · Soporte continuo
             </motion.div>
           </motion.div>
 
-          {/* Estadísticas + líneas debajo */}
-          <motion.div variants={fromRight} className="flex w-full flex-col items-center self-center md:items-center">
-            <ChartCard />
-          </motion.div>
+          {/* Estadísticas (solo desktop/tablet) */}
+          {isMd && (
+            <motion.div variants={fromRight} className="flex w-full flex-col items-center self-center">
+              <ChartCard />
+            </motion.div>
+          )}
         </div>
       </motion.div>
-      <NetworkLines full height={220} count={28} />
+      <NetworkLines full={isMd} height={isMd ? 220 : 120} count={isMd ? 28 : 12} />
 
       {/* Grid sutil */}
       <svg
