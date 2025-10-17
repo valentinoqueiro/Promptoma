@@ -134,7 +134,7 @@ export default function UseCases({ items = DEFAULT_ITEMS }: { items?: UseCase[] 
         </motion.header>
 
         {/* Filtros + barra de progreso por botón */}
-        <motion.div className="mt-8 flex flex-wrap gap-2" variants={fadeUp}>
+        <motion.div className="mt-8 hidden flex-wrap gap-2 md:flex" variants={fadeUp}>
           {TAGS.map((t) => (
             <button
               key={t.key}
@@ -178,6 +178,32 @@ export default function UseCases({ items = DEFAULT_ITEMS }: { items?: UseCase[] 
                   Explorar implementación →
                 </a>
               </div>
+            </div>
+          </motion.div>
+
+          {/* Filtros en móvil, entre la carta violeta y las tarjetas dinámicas */}
+          <motion.div className="mt-4 md:hidden" variants={fadeUp}>
+            <div className="flex flex-wrap gap-2">
+              {TAGS.map((t) => (
+                <button
+                  key={`m-${t.key}`}
+                  onClick={() => changeTo(t.key)}
+                  aria-pressed={active === t.key}
+                  className={`relative overflow-hidden rounded-full px-4 py-2 text-sm font-medium ring-1 transition
+                    ${active === t.key ? "text-white ring-[#7238E3]/40" : "text-gray-300 ring-white/10 hover:bg-white/10"}`}
+                  style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+                >
+                  {/* capa de relleno progresivo */}
+                  <span
+                    ref={active === t.key ? progressEl : undefined}
+                    aria-hidden
+                    className="absolute inset-0 origin-left bg-[#7238E3] will-change-transform"
+                    style={{ transform: "scaleX(0)" }}
+                  />
+                  {/* etiqueta por encima */}
+                  <span className="relative z-10">{t.label}</span>
+                </button>
+              ))}
             </div>
           </motion.div>
 
