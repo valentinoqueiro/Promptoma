@@ -10,7 +10,7 @@ import Footer from "./components/Footer";
 export default function Page() {
   return (
     <main>
-      <Hero imageUrl="/imagenes/macbook-grafico.png" />
+      <Hero />
       <Why embedUrl="https://www.youtube.com/embed/aircAruvnKk?si=wwItx5OLJZk3Rbp0" />
       <UseCases />
       <IntegrationsLite moreCount={500} />

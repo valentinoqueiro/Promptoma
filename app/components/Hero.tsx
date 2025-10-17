@@ -1,22 +1,22 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 /* -----------------------------
    Animations & helpers
 ------------------------------ */
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
 };
-const container = {
+const container: Variants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.08 } },
 };
 
-const fromRight = {
+const fromRight: Variants = {
   hidden: { opacity: 0, x: 140 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: "easeOut" } },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
 };
 
 /* --- Typewriter para palabras del título --- */
@@ -193,6 +193,7 @@ function NetworkLines({ height = 140, count = 12, full = false }: { height?: num
     };
 
     function step() {
+      if (!ctx) return;
       ctx.clearRect(0, 0, w, h);
 
       // mover nodos

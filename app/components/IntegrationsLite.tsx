@@ -1,13 +1,17 @@
 // app/components/IntegrationsPanel.tsx
 "use client";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 type Integration = { name: string; logo: string; href?: string };
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+  },
 };
 const container = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } };
 

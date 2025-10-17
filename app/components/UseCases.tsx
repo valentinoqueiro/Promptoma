@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 type Tag = "ai" | "auto" | "data";
 type UseCase = { title: string; desc: string; tag: Tag; href?: string };
@@ -35,9 +35,13 @@ const ORDER: Tag[] = ["ai", "auto", "data"];
 const DURATION_MS = 5000;
 const LEAVE_MS = 180;
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+  },
 };
 const container = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } };
 

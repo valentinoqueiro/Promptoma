@@ -1,6 +1,6 @@
 // app/components/CaseStudiesV2.tsx
 "use client";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode, type ElementType } from "react";
 
 type KPI = { label: string; value: string };
 type Case = {
@@ -15,7 +15,7 @@ type Case = {
 // --- Reveal local (evita dependencias) ---
 function Reveal({
   children, delay = 0, y = 12, className = "", as: Tag = "div",
-}: { children: ReactNode; delay?: number; y?: number; className?: string; as?: keyof JSX.IntrinsicElements; }) {
+}: { children: ReactNode; delay?: number; y?: number; className?: string; as?: ElementType; }) {
   const ref = useRef<HTMLElement | null>(null);
   const [shown, setShown] = useState(false);
   useEffect(() => {
