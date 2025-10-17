@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, type Variants } from "framer-motion";
+import { motion, type Variants, AnimatePresence } from "framer-motion";
 
 type Tag = "ai" | "auto" | "data";
 type UseCase = { title: string; desc: string; tag: Tag; href?: string };
@@ -49,33 +49,14 @@ export default function UseCases({ items = DEFAULT_ITEMS }: { items?: UseCase[] 
   const [active, setActive] = useState<Tag>("ai");
   const [leaving, setLeaving] = useState(false);
 
-  const progressEl = useRef<HTMLSpanElement | null>(null);
-  const rafRef = useRef<number | null>(null);
   const timerRef = useRef<number | null>(null);
 
   const filtered = useMemo(() => items.filter((i) => i.tag === active), [items, active]);
 
   useEffect(() => {
-    // limpiar animaciones previas
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    // limpiar temporizador previo y programar cambio cada 5s
     if (timerRef.current) clearTimeout(timerRef.current);
 
-    // reset visual
-    const el = progressEl.current;
-    if (el) {
-      el.style.transform = "scaleX(0)";
-    }
-
-    const start = performance.now();
-    const animate = (now: number) => {
-      const pct = Math.min(1, (now - start) / DURATION_MS);
-      const target = progressEl.current;
-      if (target) target.style.transform = `scaleX(${pct})`;
-      rafRef.current = requestAnimationFrame(animate);
-    };
-    rafRef.current = requestAnimationFrame(animate);
-
-    // rotación automática sin setState en cada frame
     timerRef.current = window.setTimeout(() => {
       setLeaving(true);
       setTimeout(() => {
@@ -87,14 +68,12 @@ export default function UseCases({ items = DEFAULT_ITEMS }: { items?: UseCase[] 
     }, DURATION_MS);
 
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, [active]);
 
   const changeTo = (next: Tag) => {
     if (next === active || leaving) return;
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
     if (timerRef.current) clearTimeout(timerRef.current);
     setLeaving(true);
     setTimeout(() => {
@@ -144,14 +123,24 @@ export default function UseCases({ items = DEFAULT_ITEMS }: { items?: UseCase[] 
                 ${active === t.key ? "text-white ring-[#7238E3]/40" : "text-gray-300 ring-white/10 hover:bg-white/10"}`}
               style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
             >
-              {/* capa de relleno progresivo */}
-              <span
-                ref={active === t.key ? progressEl : undefined}
-                aria-hidden
-                className="absolute inset-0 origin-left bg-[#7238E3] will-change-transform"
-                style={{ transform: "scaleX(0)" }}
-              />
-              {/* etiqueta por encima */}
+              {/* glow al activar/desactivar */}
+              <AnimatePresence initial={false} mode="wait">
+                {active === t.key && (
+                  <motion.span
+                    key={`glow-${t.key}`}
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 rounded-full"
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.04 }}
+                    transition={{ duration: 0.22 }}
+                  >
+                    <span aria-hidden className="pointer-events-none absolute -inset-3 rounded-full bg-[#7238E3] opacity-35 blur-2xl" />
+                    <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-[#bfa3ff]/25 to-transparent" />
+                  </motion.span>
+                )}
+              </AnimatePresence>
+              {/* etiqueta */}
               <span className="relative z-10">{t.label}</span>
             </button>
           ))}
@@ -181,7 +170,7 @@ export default function UseCases({ items = DEFAULT_ITEMS }: { items?: UseCase[] 
             </div>
           </motion.div>
 
-          {/* Filtros en móvil, entre la carta violeta y las tarjetas dinámicas */}
+          {/* Filtros en móvil, debajo de la carta violeta */}
           <motion.div className="mt-4 md:hidden" variants={fadeUp}>
             <div className="flex flex-wrap gap-2">
               {TAGS.map((t) => (
@@ -193,14 +182,23 @@ export default function UseCases({ items = DEFAULT_ITEMS }: { items?: UseCase[] 
                     ${active === t.key ? "text-white ring-[#7238E3]/40" : "text-gray-300 ring-white/10 hover:bg-white/10"}`}
                   style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
                 >
-                  {/* capa de relleno progresivo */}
-                  <span
-                    ref={active === t.key ? progressEl : undefined}
-                    aria-hidden
-                    className="absolute inset-0 origin-left bg-[#7238E3] will-change-transform"
-                    style={{ transform: "scaleX(0)" }}
-                  />
-                  {/* etiqueta por encima */}
+                  {/* glow al activar/desactivar */}
+                  <AnimatePresence initial={false} mode="wait">
+                    {active === t.key && (
+                      <motion.span
+                        key={`glow-m-${t.key}`}
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0 rounded-full"
+                        initial={{ opacity: 0, scale: 0.96 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.04 }}
+                        transition={{ duration: 0.22 }}
+                      >
+                        <span aria-hidden className="pointer-events-none absolute -inset-3 rounded-full bg-[#7238E3] opacity-35 blur-2xl" />
+                        <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-[#bfa3ff]/25 to-transparent" />
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
                   <span className="relative z-10">{t.label}</span>
                 </button>
               ))}
