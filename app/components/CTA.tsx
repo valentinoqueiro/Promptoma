@@ -1,15 +1,15 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 
 type Props = { href?: string };
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 22 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] } },
 };
-const container = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } };
+const container: Variants = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } };
 
 /** Partículas tipo "red de nodos" para el CTA */
 function CtaParticles() {
