@@ -6,17 +6,19 @@ import CaseStudies from "./components/CaseStudies";
 import HowWeWork from "./components/HowWeWork";
 import CTA from "./components/CTA";
 import Footer from "./components/Footer";
+import FloatingCalendar from "./components/FloatingCalendar";
 
 export default function Page() {
   return (
     <main>
       <Hero />
-      <Why embedUrl="https://www.youtube.com/embed/aircAruvnKk?si=wwItx5OLJZk3Rbp0" />
+      <Why />
       <UseCases />
       <IntegrationsLite moreCount={500} />
       <CaseStudies />
       <HowWeWork />
       <CTA href="#contacto" />
+      <FloatingCalendar />
       <Footer />
 
     </main>

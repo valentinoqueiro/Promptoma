@@ -47,10 +47,13 @@ export default function HowWeWork() {
         }}
       />
 
-      <motion.div className="relative mx-auto max-w-7xl px-6 py-20 md:py-28 z-20" variants={container}>
+      <motion.div
+        className="relative mx-auto max-w-7xl px-4 sm:px-6 py-14 sm:py-20 md:py-28 z-20"
+        variants={container}
+      >
         {/* Contenedor “glass” */}
-        <div className="relative rounded-[28px] p-[1px] bg-[conic-gradient(from_180deg_at_50%_50%,rgba(255,255,255,.22),rgba(255,255,255,.04),rgba(255,255,255,.22))]">
-          <div className="relative overflow-hidden rounded-[27px] bg-black/70 backdrop-blur-xl ring-1 ring-white/15 px-6 py-12 md:px-10 shadow-[0_24px_90px_rgba(0,0,0,0.55)]">
+        <div className="relative rounded-[22px] sm:rounded-[28px] p-[1px] bg-[conic-gradient(from_180deg_at_50%_50%,rgba(255,255,255,.22),rgba(255,255,255,.04),rgba(255,255,255,.22))]">
+          <div className="relative overflow-hidden rounded-[21px] sm:rounded-[27px] bg-black/70 backdrop-blur-xl ring-1 ring-white/15 px-4 sm:px-6 py-8 sm:py-12 md:px-10 shadow-[0_24px_90px_rgba(0,0,0,0.55)]">
             {/* borde iluminado */}
             <div
               aria-hidden
@@ -104,7 +107,7 @@ export default function HowWeWork() {
           </div>
 
           {/* Steps */}
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 sm:mt-10 grid gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((s) => (
               <motion.article
                 key={s.n}
@@ -135,7 +138,7 @@ export default function HowWeWork() {
           {/* CTA opcional */}
           <motion.div className="mt-10 flex justify-center" variants={fadeUp}>
             <a
-              href="#contacto"
+              href="#cta"
               className="inline-flex items-center justify-center rounded-xl bg-white/10 px-5 py-3 text-sm font-semibold ring-1 ring-white/20 transition hover:bg-white/15"
             >
               Agendar diagnóstico gratuito

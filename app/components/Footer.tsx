@@ -19,7 +19,7 @@ function IconWrap({ children, href }: { children: React.ReactNode; href?: string
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="relative text-white">
+    <footer className="relative text-white bg-[#0b0f14]">
       {/* Degradado desde abajo */}
       <div
         aria-hidden
@@ -29,7 +29,7 @@ export default function Footer() {
             "radial-gradient(70% 90% at 50% 120%, rgba(114,56,227,0.40) 0%, rgba(114,56,227,0.16) 45%, transparent 70%)",
         }}
       />
-      <div className="mx-auto max-w-7xl px-6 py-10">
+      <div className="mx-auto max-w-7xl px-6 py-10 relative z-10">
 
         <div className="mt-8 flex flex-col items-center justify-between gap-6 md:mt-10 md:flex-row">
           <p className="text-sm text-gray-400">© {year} Promptoma. Todos los derechos reservados.</p>
@@ -37,7 +37,7 @@ export default function Footer() {
           {/* Solo Instagram, LinkedIn y YouTube */}
           <nav aria-label="Redes sociales" className="flex items-center gap-4">
             {/* Instagram */}
-            <IconWrap href="#">
+            <IconWrap href="https://www.instagram.com/promptoma.ia/">
               <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
                 <path
                   fill="currentColor"
@@ -47,7 +47,7 @@ export default function Footer() {
             </IconWrap>
 
             {/* LinkedIn */}
-            <IconWrap href="#">
+            <IconWrap href="https://www.linkedin.com/in/promptoma-ia-391828395/">
               <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
                 <path
                   fill="currentColor"
@@ -57,7 +57,7 @@ export default function Footer() {
             </IconWrap>
 
             {/* YouTube */}
-            <IconWrap href="#">
+            <IconWrap href="https://www.youtube.com/@Promptoma">
               <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
                 <path
                   fill="currentColor"

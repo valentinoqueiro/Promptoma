@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef } from "react";
+import Cal, { getCalApi } from "@calcom/embed-react";
 import { motion, type Variants } from "framer-motion";
 
 
@@ -177,6 +178,16 @@ function CtaParticles() {
 }
 
 export default function CTA({ href = "#contacto" }: Props) {
+  useEffect(() => {
+    (async function () {
+      const cal = await getCalApi({ namespace: "30min" });
+      cal("ui", {
+        theme: "dark",
+        hideEventTypeDetails: true,
+        layout: "month_view",
+      });
+    })();
+  }, []);
   return (
     <motion.section
       id="cta"
@@ -204,13 +215,39 @@ export default function CTA({ href = "#contacto" }: Props) {
       </svg>
       <CtaParticles />
 
-      <motion.div className="relative mx-auto max-w-6xl px-6 py-24 md:py-32 z-20" variants={container}>
-        <div className="relative rounded-[28px] p-[1px] bg-[conic-gradient(from_180deg_at_50%_50%,rgba(255,255,255,.22),rgba(255,255,255,.04),rgba(255,255,255,.22))]">
-          <div className="relative overflow-hidden rounded-[27px] bg-black/70 backdrop-blur-xl ring-1 ring-white/15 px-6 py-16 md:px-12 text-center shadow-[0_24px_90px_rgba(0,0,0,0.55)]">
+      <motion.div
+        className="
+          relative z-20
+          mx-auto
+          max-w-none sm:max-w-6xl
+          px-3 sm:px-6
+          py-16 sm:py-24 md:py-32
+        "
+        variants={container}
+      >
+        <div
+          className="
+            relative
+            sm:rounded-[28px]
+            sm:p-[1px]
+            sm:bg-[conic-gradient(from_180deg_at_50%_50%,rgba(255,255,255,.22),rgba(255,255,255,.04),rgba(255,255,255,.22))]
+          "
+        >
+          <div
+            className="
+              relative overflow-hidden
+              bg-black/70 backdrop-blur-xl
+              ring-0 sm:ring-1 sm:ring-white/15
+              px-3 py-10 sm:px-6 sm:py-16 md:px-12
+              text-center
+              shadow-none sm:shadow-[0_24px_90px_rgba(0,0,0,0.55)]
+              sm:rounded-[27px]
+            "
+          >
             {/* borde iluminado mejorado */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 rounded-[27px] opacity-[.14]"
+              className="pointer-events-none absolute inset-0 rounded-[27px] opacity-[.14] hidden sm:block"
               style={{
                 background:
                   "linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,.12), rgba(255,255,255,.04), rgba(255,255,255,.12), rgba(255,255,255,.45))",
@@ -219,7 +256,7 @@ export default function CTA({ href = "#contacto" }: Props) {
             {/* Viñeta interior para profundidad */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 rounded-[27px]"
+              className="pointer-events-none absolute inset-0 rounded-[27px] hidden sm:block"
               style={{ boxShadow: "inset 0 0 140px rgba(0,0,0,.48), inset 0 0 60px rgba(0,0,0,.30)" }}
             />
             <motion.h2 className="text-3xl font-extrabold tracking-tight sm:text-5xl" variants={fadeUp}>
@@ -228,13 +265,38 @@ export default function CTA({ href = "#contacto" }: Props) {
             <motion.p className="mt-4 text-base text-gray-300" variants={fadeUp}>
               Demos el primer paso ahora.
             </motion.p>
-            <motion.div className="mt-10" variants={fadeUp}>
-              <a
-                href={href}
-                className="inline-flex items-center justify-center rounded-xl bg-violet-600 px-6 py-3 text-base font-semibold ring-1 ring-white/10 transition hover:bg-violet-500"
-              >
-                Agendar reunión
-              </a>
+            <motion.div
+              className="
+        relative mt-10 w-full
+        h-[70vh] min-h-[480px] sm:h-[560px] md:h-[620px]
+        overflow-hidden rounded-2xl
+        border border-white/10
+        bg-black/70
+        shadow-[0_20px_80px_rgba(0,0,0,0.6)]
+      "
+              variants={fadeUp}
+            >
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 z-0"
+                style={{
+                  background:
+                    "radial-gradient(360px 220px at 50% 0%, rgba(139,92,246,0.28), transparent 70%)",
+                }}
+              />
+              <div className="relative z-10 h-full w-full">
+                <Cal
+                  namespace="30min"
+                  calLink="valentino-queiro/30min"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    overflow: "auto",
+                    WebkitOverflowScrolling: "touch",
+                  }}
+                  config={{ layout: "month_view", theme: "dark" }}
+                />
+              </div>
             </motion.div>
           </div>
         </div>

@@ -1,44 +1,100 @@
 "use client";
 import { motion, type Variants } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import { ChartCard } from "./Hero";
 
-import { useEffect, useRef, useState } from "react";
-
-type Benefit = { title: string; desc: string };
+type Benefit = { title: string; desc: string; icon: React.ReactNode };
 type WhyProps = {
-  embedUrl: string;
   benefits?: Benefit[];
 };
 
+const BENEFIT_ICONS = {
+  clock: (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  ),
+  rocket: (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+      <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+      <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+      <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+    </svg>
+  ),
+  shield: (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  ),
+  users: (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  ),
+  sparkles: (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+      <path d="M5 3v4" />
+      <path d="M19 17v4" />
+      <path d="M3 5h4" />
+      <path d="M17 19h4" />
+    </svg>
+  ),
+  zap: (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </svg>
+  ),
+};
+
 const DEFAULT_BENEFITS: Benefit[] = [
-  { title: "Ahorra tiempo", desc: "Automatiza tareas repetitivas y gana horas por semana." },
-  { title: "Aumenta productividad", desc: "Estandariza procesos y ejecuta más con el mismo equipo." },
-  { title: "Evita errores", desc: "Menos carga manual, menos fallas y datos consistentes." },
-  { title: "Libera al equipo", desc: "Deja lo mecánico a los bots y enfoca al equipo en valor." },
-  { title: "Mejora la experiencia", desc: "Respuestas rápidas, follow-ups automáticos y mejor servicio." },
-  { title: "Escala con IA", desc: "Flujos inteligentes: clasificación, resumen, decisiones y más." },
+  { title: "Ahorra tiempo", desc: "Automatiza lo repetitivo y gana horas.", icon: BENEFIT_ICONS.clock },
+  { title: "Sube productividad", desc: "Ejecuta más con el mismo equipo.", icon: BENEFIT_ICONS.rocket },
+  { title: "Evita errores", desc: "Menos fallas y datos consistentes.", icon: BENEFIT_ICONS.shield },
+  { title: "Libera al equipo", desc: "Deja que los bots hagan lo tedioso.", icon: BENEFIT_ICONS.users },
+  { title: "Mejor servicio", desc: "Respuestas 24/7 y seguimiento automático.", icon: BENEFIT_ICONS.sparkles },
+  { title: "Escala con IA", desc: "Decisiones y clasificación inteligente.", icon: BENEFIT_ICONS.zap },
 ];
 
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.5, ease: "easeOut" },
   },
 };
-const container = {
+
+const staggerContainer = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.08 } },
+  visible: { transition: { staggerChildren: 0.1 } },
 };
 
-/* --- StarField: fondo con estrellas titilando (sin saltos en mobile) --- */
+function useIsMdUp() {
+  const [isMd, setIsMd] = React.useState(false);
+  React.useEffect(() => {
+    const m = window.matchMedia("(min-width: 768px)");
+    const onChange = () => setIsMd(m.matches);
+    onChange();
+    m.addEventListener("change", onChange);
+    return () => m.removeEventListener("change", onChange);
+  }, []);
+  return isMd;
+}
+
 function StarField({ className = "" }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-const ctx = canvas.getContext("2d")!;
+    const ctx = canvas.getContext("2d")!;
     if (!ctx) return;
 
     let raf = 0 as number;
@@ -57,7 +113,6 @@ const ctx = canvas.getContext("2d")!;
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      // reubicar estrellas proporcionalmente sin recrearlas
       if (reflow && stars.length && prevW > 0 && prevH > 0) {
         const sx = w / prevW;
         const sy = h / prevH;
@@ -72,14 +127,14 @@ const ctx = canvas.getContext("2d")!;
       const nw = parent?.clientWidth || 800;
       const nh = parent?.clientHeight || 400;
       applySize(nw, nh, false);
-      const density = 0.00028; // estrellas por px^2 aprox
-      const count = Math.max(60, Math.min(180, Math.floor(w * h * density)));
+      const density = 0.0002;
+      const count = Math.max(50, Math.min(150, Math.floor(w * h * density)));
       stars = Array.from({ length: count }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
-        r: rand(0.4, 1.6),
-        base: rand(0.25, 0.6),
-        speed: rand(0.8, 1.6),
+        r: rand(0.3, 1.5),
+        base: rand(0.2, 0.5),
+        speed: rand(0.5, 1.5),
         phase: rand(0, Math.PI * 2),
       }));
     };
@@ -88,7 +143,7 @@ const ctx = canvas.getContext("2d")!;
       ctx.clearRect(0, 0, w, h);
       ctx.globalCompositeOperation = "lighter";
       for (const s of stars) {
-        const twinkle = s.base + 0.35 * Math.sin(s.phase + t * 0.0012 * s.speed);
+        const twinkle = s.base + 0.4 * Math.sin(s.phase + t * 0.001 * s.speed);
         ctx.fillStyle = `rgba(255,255,255,${Math.max(0, Math.min(1, twinkle))})`;
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
@@ -101,7 +156,6 @@ const ctx = canvas.getContext("2d")!;
     init();
     raf = requestAnimationFrame(frame);
 
-    // Observa tamaño real del contenedor; evita recrear estrellas en micro-resizes
     const parent = canvas.parentElement as HTMLElement;
     const ro = new ResizeObserver((entries) => {
       const rect = entries[0]?.contentRect;
@@ -110,7 +164,6 @@ const ctx = canvas.getContext("2d")!;
       const nh = Math.round(rect.height);
       const dw = Math.abs(nw - w);
       const dh = Math.abs(nh - h);
-      // Ignora cambios pequeños de altura típicos al mostrar/ocultar la barra del navegador móvil
       if (dw < 1 && dh < 24) return;
       applySize(nw, nh, true);
     });
@@ -128,158 +181,135 @@ const ctx = canvas.getContext("2d")!;
   );
 }
 
-/* --- Card con glow que sigue el mouse --- */
-function GlowCard({ children, variants }: { children: React.ReactNode; variants?: any }) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [pos, setPos] = useState<{ x: number; y: number; o: number }>({ x: 0, y: 0, o: 0 });
-
-  const onMove = (e: React.MouseEvent) => {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    setPos({ x: e.clientX - rect.left, y: e.clientY - rect.top, o: 1 });
-  };
-
+// Tarjeta Minimalista y Compacta
+function CompactCard({ children, align = "left" }: { children: React.ReactNode; align?: "left" | "right" }) {
   return (
-    <motion.article
-      ref={ref as any}
-      variants={variants}
-      onMouseMove={onMove}
-      onMouseLeave={() => setPos((p) => ({ ...p, o: 0 }))}
-      className="group relative overflow-hidden rounded-2xl bg-black/60 p-5 ring-1 ring-white/12 backdrop-blur-sm transition-colors duration-300 hover:bg-black/70 hover:ring-white/25"
+    <div
+      className={`
+        group relative overflow-hidden rounded-xl 
+        bg-white/[0.03] hover:bg-white/[0.06] 
+        p-4 transition-all duration-300 
+        hover:ring-1 hover:ring-white/20
+        ${align === "right" ? "lg:text-right lg:items-end" : "lg:text-left lg:items-start"}
+        flex flex-col gap-3 justify-center
+      `}
     >
-      {/* glow que sigue el cursor */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            pos.o === 0
-              ? "transparent"
-              : `radial-gradient(220px 220px at ${pos.x}px ${pos.y}px, rgba(255,255,255,0.16), transparent 60%)`,
-        }}
-      />
-      {/* borde reactivo */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-2xl"
-        style={{ boxShadow: `inset 0 0 0 1px rgba(255,255,255,${pos.o ? 0.22 : 0.12})` }}
-      />
+      {/* Simple Hover Glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-      {/* contenido */}
       <div className="relative z-10">{children}</div>
-    </motion.article>
+    </div>
   );
 }
 
-export default function Why({ embedUrl, benefits = DEFAULT_BENEFITS }: WhyProps) {
+export default function Why({ benefits = DEFAULT_BENEFITS }: WhyProps) {
+  const isMd = useIsMdUp();
+
+  // Dividir beneficios para layout simétrico
+  const leftBenefits = benefits.slice(0, 3);
+  const rightBenefits = benefits.slice(3, 6);
+
   return (
     <motion.section
-      id="demo"
-      className="relative overflow-hidden bg-[#080c13] text-white"
-      initial="hidden"
+      id="why-section"
+      className="relative overflow-hidden bg-[#06090f] text-white py-20 sm:py-24"
+      initial={isMd ? "hidden" : "visible"}
       whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={isMd ? { once: true, amount: 0.2 } : undefined}
     >
-      {/* Degradados adicionales estilo sección anterior */}
+      {/* Background Ambience */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-0"
+        className="pointer-events-none absolute inset-0 z-0 opacity-40"
         style={{
-          backgroundImage:
-            "radial-gradient(560px 360px at 50% 50%, rgba(114,56,227,0.65) 0%, rgba(114,56,227,0.32) 46%, transparent 68%), radial-gradient(900px 520px at 85% 15%, rgba(191,76,65,0.22) 0%, transparent 60%)",
+          background: "radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.08), transparent 60%)",
         }}
       />
-      {/* Estrellas sutiles */}
-      <StarField className="z-[5] opacity-[0.5]" />
-      {/* Fondo cuadriculado sutil */}
-      <svg
-        aria-hidden
-        className="pointer-events-none absolute inset-0 z-10 h-full w-full opacity-[0.08]"
-      >
-        <defs>
-          <pattern id="grid2-why" width="32" height="32" patternUnits="userSpaceOnUse">
-            <path d="M 32 0 L 0 0 0 32" fill="none" stroke="white" strokeWidth="0.5" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#grid2-why)" />
-      </svg>
 
-      <motion.div className="relative mx-auto max-w-7xl px-6 py-20 md:py-28" variants={container}>
-        {/* Contenedor de la sección */}
-        <div className="relative overflow-hidden rounded-[28px] ring-1 ring-white/15 backdrop-blur-xl bg-black/60 px-6 py-12 md:px-10 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
-          {/* Capa de glow interior (radial) */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10"
-            style={{
-              backgroundImage:
-                "radial-gradient(900px 520px at 50% 35%, rgba(114,56,227,0.42) 0%, rgba(191,76,65,0.28) 30%, rgba(0,0,0,0) 58%)",
-            }}
-          />
-          {/* Trazo suave alrededor (simula borde iluminado) */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -inset-px rounded-[28px] opacity-[0.12]"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(255,255,255,.38), rgba(255,255,255,.16), rgba(255,255,255,.06), rgba(255,255,255,.16), rgba(255,255,255,.38))",
-            }}
-          />
-          {/* Viñeta en bordes para profundidad */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 rounded-[28px]"
-            style={{ boxShadow: "inset 0 0 120px rgba(0,0,0,.45), inset 0 0 48px rgba(0,0,0,.32)" }}
-          />
+      <StarField className="z-[5] opacity-40" />
 
-        <motion.header className="max-w-3xl" variants={fadeUp}>
-          <p className="text-sm text-gray-400">Por qué elegirnos</p>
-          <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
-            Por qué la automatización y la IA son una necesidad hoy
+      <div className="relative z-20 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        {/* Compact Header */}
+        <motion.div className="max-w-2xl mx-auto text-center mb-16" variants={fadeUp}>
+          <div className="inline-flex items-center gap-2 mb-4">
+            <span className="h-px w-8 bg-gradient-to-r from-transparent to-violet-400/50"></span>
+            <span className="text-xs font-medium text-violet-300 uppercase tracking-widest">
+              Impacto Real
+            </span>
+            <span className="h-px w-8 bg-gradient-to-l from-transparent to-violet-400/50"></span>
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white mb-4">
+            Automatización que <br className="hidden sm:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-br from-white to-violet-200">
+              transforma tu negocio
+            </span>
           </h2>
-          <p className="mt-4 text-gray-300">
-            Reduce trabajo manual, mejora la experiencia del cliente y escala sin fricción.
-          </p>
-        </motion.header>
 
-        <div className="mt-10 grid gap-10 md:grid-cols-2 md:items-start">
-          {/* Video */}
-          <motion.div className="relative" variants={fadeUp}>
-            <div className="aspect-video overflow-hidden rounded-2xl ring-1 ring-white/10 shadow-2xl">
-              <iframe
-                src={embedUrl}
-                title="Demostración"
-                loading="lazy"
-                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                className="h-full w-full"
-                referrerPolicy="strict-origin-when-cross-origin"
-              />
+          <p className="text-base text-gray-400 max-w-xl mx-auto">
+            Eficiencia operativa y escalabilidad sin fricción. La nueva ventaja competitiva.
+          </p>
+        </motion.div>
+
+        {/* Symmetrical Layout */}
+        <div className="grid lg:grid-cols-3 gap-8 lg:gap-4 items-center">
+
+          {/* Left Column */}
+          <motion.div className="flex flex-col gap-4 order-2 lg:order-1" variants={staggerContainer}>
+            {leftBenefits.map((b, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <CompactCard align="right">
+                  {/* Para móvil alinea izquierda, desktop derecha */}
+                  <div className="flex flex-row lg:flex-row-reverse items-center gap-4 w-full">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5 text-violet-300 group-hover:text-white group-hover:bg-violet-500/20 transition-colors">
+                      {b.icon}
+                    </div>
+                    <div className="flex-1 lg:text-right text-left">
+                      <h3 className="text-base font-semibold text-gray-100">{b.title}</h3>
+                      <p className="text-xs text-gray-400 mt-0.5">{b.desc}</p>
+                    </div>
+                  </div>
+                </CompactCard>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Center Column (Chart) */}
+          <motion.div
+            className="relative flex justify-center order-1 lg:order-2 py-8 lg:py-0"
+            variants={fadeUp}
+          >
+            {/* Glow behind chart */}
+            <div className="absolute inset-0 bg-violet-500/10 blur-[60px] rounded-full pointer-events-none" />
+
+            <div className="relative z-10 w-full max-w-[340px] lg:max-w-full">
+              <ChartCard />
             </div>
           </motion.div>
 
-          {/* Cards */}
-          <motion.div className="grid gap-4 sm:grid-cols-2" variants={container}>
-            {benefits.map((b, i) => (
-              <GlowCard key={i} variants={fadeUp}>
-                <div className="flex items-start gap-3">
-                  <span className="mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/30">
-                    <svg viewBox="0 0 24 24" className="h-4 w-4 text-white" fill="currentColor">
-                      <path d="M10 17l-4-4 1.4-1.4L10 14.2l6.6-6.6L19 9l-9 8z" />
-                    </svg>
-                  </span>
-                  <div>
-                    <h3 className="text-base font-semibold">{b.title}</h3>
-                    <p className="mt-1 text-sm text-gray-300">{b.desc}</p>
+          {/* Right Column */}
+          <motion.div className="flex flex-col gap-4 order-3" variants={staggerContainer}>
+            {rightBenefits.map((b, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <CompactCard align="left">
+                  <div className="flex flex-row items-center gap-4 w-full">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5 text-fuchsia-300 group-hover:text-white group-hover:bg-fuchsia-500/20 transition-colors">
+                      {b.icon}
+                    </div>
+                    <div className="flex-1 text-left">
+                      <h3 className="text-base font-semibold text-gray-100">{b.title}</h3>
+                      <p className="text-xs text-gray-400 mt-0.5">{b.desc}</p>
+                    </div>
                   </div>
-                </div>
-              </GlowCard>
+                </CompactCard>
+              </motion.div>
             ))}
           </motion.div>
+
         </div>
-        </div>
-      </motion.div>
+
+      </div>
     </motion.section>
   );
 }
