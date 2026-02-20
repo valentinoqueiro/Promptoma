@@ -288,7 +288,7 @@ export default function IntegrationsPanel({
 
       layout="position"
 
-      className="relative overflow-hidden bg-gradient-to-b from-[#0b0f14] to-[#111827] text-white"
+      className="relative overflow-hidden bg-[#0d1219] text-white"
 
       initial="hidden"
 
@@ -308,7 +308,7 @@ export default function IntegrationsPanel({
 
           px-3 sm:px-6
 
-          py-16 sm:py-24
+          py-8 sm:py-12
 
         "
 

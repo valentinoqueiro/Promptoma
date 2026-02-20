@@ -143,6 +143,7 @@ function ChatDemo() {
     // fase 0-3: mensajes automáticos, 4: esperando input, 5: msg usuario enviado,
     // 6: bot escribiendo, 7: bot responde
     const [fase, setFase] = useState(0);
+    const mensajesRef = useRef<HTMLDivElement>(null);
 
     const mensajesAuto = [
         { tipo: "usuario" as const, texto: "Hola, necesito información sobre sus servicios" },
@@ -188,6 +189,13 @@ function ChatDemo() {
     ];
 
     const botEscribiendo = (fase < 4 && fase > 0 && mensajesAuto[fase].tipo === "bot") || fase === 6;
+
+    // Auto-scroll al último mensaje
+    useEffect(() => {
+        if (mensajesRef.current) {
+            mensajesRef.current.scrollTop = mensajesRef.current.scrollHeight;
+        }
+    }, [fase]);
 
     return (
         /* Contenedor con perspectiva 3D y efecto de carta física */
@@ -264,7 +272,7 @@ function ChatDemo() {
                 </div>
 
                 {/* Área de mensajes */}
-                <div className="flex flex-col gap-3 p-5 min-h-[260px] md:min-h-[300px]">
+                <div ref={mensajesRef} className="flex flex-col gap-3 p-5 min-h-[260px] md:min-h-[300px] max-h-[320px] md:max-h-[360px] overflow-y-auto">
                     {mensajesAMostrar.map((msg, idx) => (
                         <motion.div
                             key={`msg-${idx}`}
@@ -406,67 +414,108 @@ const integFilaInferior = [
     { nombre: "Slack", icono: "/imagenes/DeviconSlack.svg" },
 ];
 
-function MarqueeIntegraciones() {
-    const [scrollAbajo, setScrollAbajo] = useState(true);
-    const ultimoScroll = useRef(0);
+function FilaMarquee({ items, velocidadBase }: { items: typeof integFilaSuperior; velocidadBase: number }) {
+    const contenedorRef = useRef<HTMLDivElement>(null);
+    const posicionRef = useRef(0);
+    const velocidadActualRef = useRef(velocidadBase);
+    const rafRef = useRef<number>(0);
+    const ultimoTiempoRef = useRef(0);
 
+    // Escuchar dirección de scroll para invertir velocidad suavemente
     useEffect(() => {
+        let ultimoScrollY = window.scrollY;
+
         const manejarScroll = () => {
             const actual = window.scrollY;
-            setScrollAbajo(actual >= ultimoScroll.current);
-            ultimoScroll.current = actual;
+            const haciaAbajo = actual >= ultimoScrollY;
+            // La velocidad objetivo depende de la dirección de scroll
+            velocidadActualRef.current = haciaAbajo ? velocidadBase : -velocidadBase;
+            ultimoScrollY = actual;
         };
+
         window.addEventListener("scroll", manejarScroll, { passive: true });
         return () => window.removeEventListener("scroll", manejarScroll);
+    }, [velocidadBase]);
+
+    // Loop de animación con requestAnimationFrame
+    useEffect(() => {
+        const animar = (tiempo: number) => {
+            if (!contenedorRef.current) {
+                rafRef.current = requestAnimationFrame(animar);
+                return;
+            }
+
+            if (ultimoTiempoRef.current === 0) {
+                ultimoTiempoRef.current = tiempo;
+            }
+
+            const delta = (tiempo - ultimoTiempoRef.current) / 1000; // segundos
+            ultimoTiempoRef.current = tiempo;
+
+            // Mover posición
+            posicionRef.current += velocidadActualRef.current * delta;
+
+            // Ancho de un bloque (1/3 del total porque triplicamos items)
+            const anchoBloque = contenedorRef.current.scrollWidth / 3;
+
+            // Wrap-around para ciclo infinito
+            if (posicionRef.current <= -anchoBloque) {
+                posicionRef.current += anchoBloque;
+            } else if (posicionRef.current >= 0) {
+                posicionRef.current -= anchoBloque;
+            }
+
+            contenedorRef.current.style.transform = `translateX(${posicionRef.current}px)`;
+            rafRef.current = requestAnimationFrame(animar);
+        };
+
+        rafRef.current = requestAnimationFrame(animar);
+        return () => cancelAnimationFrame(rafRef.current);
     }, []);
 
-    const renderFila = (items: typeof integFilaSuperior, invertir: boolean) => {
-        // Duplicamos los items para crear el efecto infinito
-        const duplicados = [...items, ...items, ...items];
-        const direccion = invertir
-            ? (scrollAbajo ? "reverse" : "normal")
-            : (scrollAbajo ? "normal" : "reverse");
-
-        return (
-            <div className="relative overflow-hidden" style={{ maskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)" }}>
-                <div
-                    className="flex gap-4 w-max"
-                    style={{
-                        animation: `marquee-scroll 60s linear infinite`,
-                        animationDirection: direccion,
-                    }}
-                >
-                    {duplicados.map((item, idx) => (
-                        <div
-                            key={`${item.nombre}-${idx}`}
-                            className="flex items-center gap-2.5 rounded-xl bg-white/[0.04] px-4 py-2.5 ring-1 ring-white/[0.06] transition-colors hover:bg-white/[0.08] hover:ring-white/[0.12] shrink-0"
-                        >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                src={item.icono}
-                                alt={item.nombre}
-                                className="h-5 w-5 object-contain"
-                            />
-                            <span className="text-sm font-medium text-gray-300 whitespace-nowrap">
-                                {item.nombre}
-                            </span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
-    };
+    const duplicados = [...items, ...items, ...items];
 
     return (
+        <div className="relative overflow-hidden" style={{ maskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)" }}>
+            <div
+                ref={contenedorRef}
+                className="flex gap-4 w-max will-change-transform"
+            >
+                {duplicados.map((item, idx) => (
+                    <div
+                        key={`${item.nombre}-${idx}`}
+                        className="flex items-center gap-2.5 rounded-xl bg-white/[0.04] px-4 py-2.5 ring-1 ring-white/[0.06] transition-colors hover:bg-white/[0.08] hover:ring-white/[0.12] shrink-0"
+                    >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src={item.icono}
+                            alt={item.nombre}
+                            className="h-5 w-5 object-contain"
+                        />
+                        <span className="text-sm font-medium text-gray-300 whitespace-nowrap">
+                            {item.nombre}
+                        </span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function MarqueeIntegraciones() {
+    return (
         <div className="space-y-4">
-            {renderFila(integFilaSuperior, false)}
-            {renderFila(integFilaInferior, true)}
+            {/* Fila superior: 40px/s hacia la izquierda por defecto */}
+            <FilaMarquee items={integFilaSuperior} velocidadBase={-40} />
+            {/* Fila inferior: 40px/s hacia la derecha por defecto (invertida) */}
+            <FilaMarquee items={integFilaInferior} velocidadBase={40} />
         </div>
     );
 }
 /* --- Demo interactiva: Calificación de leads --- */
 function DemoCalificacion() {
     const [fase, setFase] = useState(0);
+    const mensajesCalifRef = useRef<HTMLDivElement>(null);
     // fases: 0=listo msg1, 1=msg1 enviado, 2=bot escribiendo, 3=bot responde, 4=card lead
     //         5=listo msg2, 6=msg2 enviado, 7=bot escribiendo, 8=bot responde msg2
     //         9=listo msg3, 10=msg3 enviado, 11=bot escribiendo, 12=bot responde msg3 + notif reunión
@@ -534,6 +583,13 @@ function DemoCalificacion() {
     ];
 
     const botEscribiendo = fase === 2 || fase === 7 || fase === 11;
+
+    // Auto-scroll al último mensaje
+    useEffect(() => {
+        if (mensajesCalifRef.current) {
+            mensajesCalifRef.current.scrollTop = mensajesCalifRef.current.scrollHeight;
+        }
+    }, [fase]);
 
     return (
         <section className="relative bg-gradient-to-b from-[#111827] via-[#0f1520] to-[#111827] py-20 md:py-28 overflow-hidden">
@@ -625,7 +681,7 @@ function DemoCalificacion() {
                             </div>
 
                             {/* Mensajes */}
-                            <div className="flex flex-col gap-2.5 p-4 min-h-[280px] md:min-h-[320px] max-h-[420px] overflow-y-auto">
+                            <div ref={mensajesCalifRef} className="flex flex-col gap-2.5 p-4 min-h-[280px] md:min-h-[320px] max-h-[420px] overflow-y-auto">
                                 {mensajesIniciales.map((msg, idx) => (
                                     <div
                                         key={`ini-${idx}`}
@@ -1007,7 +1063,7 @@ export default function PaginaChatbots() {
     }, []);
 
     return (
-        <main className="bg-[#0b0f14] text-white">
+        <main className="bg-[#0b0f14] text-white overflow-x-hidden">
             {/* ======== HERO ======== */}
             <motion.section
                 id="inicio-chatbots"
@@ -1175,13 +1231,7 @@ export default function PaginaChatbots() {
 
             {/* ======== INTEGRACIONES ======== */}
             <section id="integraciones" className="relative bg-gradient-to-b from-[#111827] to-[#0b0f14] py-20 md:py-28 overflow-hidden">
-                {/* CSS keyframe para el marquee */}
-                <style>{`
-                    @keyframes marquee-scroll {
-                        0% { transform: translateX(0); }
-                        100% { transform: translateX(-33.333%); }
-                    }
-                `}</style>
+
 
                 <div className="mx-auto max-w-6xl px-4 md:px-8">
                     <motion.div
@@ -1247,12 +1297,12 @@ export default function PaginaChatbots() {
                         >
                             Volver al inicio
                         </a>
-                        <a
-                            href="/#cta"
-                            className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 px-8 py-3 text-base font-semibold shadow-lg shadow-violet-500/25 transition hover:from-violet-500 hover:to-violet-400 sm:w-auto md:px-10 md:py-4 md:text-lg"
+                        <button
+                            onClick={() => { window.location.href = "/#cta"; }}
+                            className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 px-8 py-3 text-base font-semibold shadow-lg shadow-violet-500/25 transition hover:from-violet-500 hover:to-violet-400 cursor-pointer sm:w-auto md:px-10 md:py-4 md:text-lg"
                         >
                             Agendar entrevista gratis
-                        </a>
+                        </button>
                     </motion.div>
 
                     {/* Trust badges */}

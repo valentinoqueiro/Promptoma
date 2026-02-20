@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 /* --- Tipos --- */
 interface NavbarProps {
@@ -10,15 +10,14 @@ interface NavbarProps {
 /* --- Enlaces por defecto --- */
 const enlacesPorDefecto = [
     { etiqueta: "Inicio", href: "#inicio" },
-    { etiqueta: "Beneficios", href: "#why-section" },
-    { etiqueta: "Casos de uso", href: "#use-cases" },
-    { etiqueta: "Chatbots", href: "/chatbots" },
+    { etiqueta: "Chatbots", href: "#chatbots-promo" },
+    { etiqueta: "Casos de uso", href: "#casos-uso" },
+    { etiqueta: "Casos de éxito", href: "#casos-exito" },
 ];
 
 export default function Navbar({
     enlaces = enlacesPorDefecto,
 }: NavbarProps) {
-    const [menuAbierto, setMenuAbierto] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [enlaceActivo, setEnlaceActivo] = useState("");
 
@@ -55,33 +54,53 @@ export default function Navbar({
         return () => window.removeEventListener("scroll", observar);
     }, [enlaces]);
 
-    useEffect(() => {
-        document.body.style.overflow = menuAbierto ? "hidden" : "";
-        return () => { document.body.style.overflow = ""; };
-    }, [menuAbierto]);
+    /* Enlace para mobile: en subpáginas mostrar "Inicio", en principal mostrar "Chatbots" */
+    const enlaceInicio = enlaces.find((e) => e.href === "/");
+    const enlaceMobile = enlaceInicio
+        || enlaces.find((e) => e.etiqueta.toLowerCase().includes("chatbot"));
 
     return (
-        <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
-                    ? "bg-[#0b0f14]/70 backdrop-blur-2xl border-b border-white/[0.06]"
-                    : "bg-transparent"
-                }`}
+        <motion.nav
+            className="fixed top-0 left-0 right-0 z-50"
+            initial={false}
+            animate={scrolled ? "visible" : "oculto"}
         >
-            <div className="mx-auto max-w-6xl flex items-center justify-between px-4 py-3 md:px-8 md:py-3.5">
-                {/* Logo */}
-                <a href="/" className="flex items-center gap-2.5 group">
+            {/* Fondo con animación glassmorphism */}
+            <motion.div
+                className="absolute inset-0 bg-[#0b0f14]/80 backdrop-blur-2xl"
+                variants={{
+                    oculto: { opacity: 0 },
+                    visible: { opacity: 1 },
+                }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+            />
+
+            {/* Línea inferior con gradiente animado */}
+            <motion.div
+                className="absolute bottom-0 left-0 right-0 h-[1px]"
+                style={{
+                    background:
+                        "linear-gradient(90deg, transparent, rgba(114,56,227,0.4) 30%, rgba(155,107,255,0.5) 50%, rgba(114,56,227,0.4) 70%, transparent)",
+                }}
+                variants={{
+                    oculto: { opacity: 0, scaleX: 0.3 },
+                    visible: { opacity: 1, scaleX: 1 },
+                }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            <div className="relative mx-auto max-w-6xl flex items-center justify-between px-4 py-3 md:px-8 md:py-3.5 overflow-hidden">
+                {/* Logo - solo imagen, más grande */}
+                <a href="/" className="group">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                         src="/imagenes/Logo-Promptoma.png"
                         alt="Promptoma"
-                        className="h-8 w-8 rounded-lg object-contain transition-transform duration-300 group-hover:scale-110"
+                        className="h-12 w-12 md:h-[3.25rem] md:w-[3.25rem] rounded-xl object-contain transition-transform duration-300 group-hover:scale-110"
                     />
-                    <span className="text-[1.05rem] font-semibold text-white/90 tracking-tight transition-colors group-hover:text-white">
-                        Promptoma
-                    </span>
                 </a>
 
-                {/* Enlaces - Desktop: pastilla glassmorphism centrada */}
+                {/* Enlaces - Desktop: pastilla glassmorphism */}
                 <div className="hidden md:flex items-center gap-0.5 rounded-full bg-white/[0.04] px-1.5 py-1 ring-1 ring-white/[0.06]">
                     {enlaces.map((enlace) => {
                         const esActivo = enlaceActivo === enlace.href;
@@ -90,8 +109,8 @@ export default function Navbar({
                                 key={enlace.href}
                                 href={enlace.href}
                                 className={`relative px-4 py-1.5 text-[13px] font-medium rounded-full transition-all duration-300 ${esActivo
-                                        ? "text-white"
-                                        : "text-gray-400 hover:text-gray-200"
+                                    ? "text-white"
+                                    : "text-gray-400 hover:text-gray-200"
                                     }`}
                             >
                                 {/* Indicador activo animado */}
@@ -119,51 +138,25 @@ export default function Navbar({
                     </div>
                 </div>
 
-                {/* Botón hamburguesa - Móvil */}
-                <button
-                    onClick={() => setMenuAbierto(!menuAbierto)}
-                    className="md:hidden relative flex items-center justify-center w-9 h-9 rounded-lg transition-colors hover:bg-white/5"
-                    aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
-                    aria-expanded={menuAbierto}
-                >
-                    <div className="flex flex-col items-center justify-center gap-[5px]">
-                        <span
-                            className={`block h-[1.5px] w-[18px] bg-gray-300 rounded-full transition-all duration-300 origin-center ${menuAbierto ? "rotate-45 translate-y-[3.25px]" : ""
-                                }`}
-                        />
-                        <span
-                            className={`block h-[1.5px] w-[18px] bg-gray-300 rounded-full transition-all duration-300 origin-center ${menuAbierto ? "-rotate-45 -translate-y-[3.25px]" : ""
-                                }`}
-                        />
-                    </div>
-                </button>
-            </div>
-
-            {/* Menú móvil */}
-            <AnimatePresence>
-                {menuAbierto && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2, ease: "easeInOut" }}
-                        className="md:hidden overflow-hidden bg-[#0b0f14]/95 backdrop-blur-2xl border-t border-white/[0.04]"
+                {/* Mobile: enlace contextual */}
+                {enlaceMobile && (
+                    <a
+                        href={enlaceMobile.href}
+                        className="md:hidden flex items-center gap-2 rounded-full bg-white/[0.06] px-3.5 py-1.5 text-[13px] font-medium text-gray-300 ring-1 ring-white/[0.08] transition-all hover:bg-white/[0.1] hover:text-white shrink-0"
                     >
-                        <div className="flex flex-col px-4 py-5 gap-0.5">
-                            {enlaces.map((enlace) => (
-                                <a
-                                    key={enlace.href}
-                                    href={enlace.href}
-                                    onClick={() => setMenuAbierto(false)}
-                                    className="px-4 py-3 text-[15px] font-medium text-gray-300 rounded-xl transition-colors hover:text-white hover:bg-white/[0.04]"
-                                >
-                                    {enlace.etiqueta}
-                                </a>
-                            ))}
-                        </div>
-                    </motion.div>
+                        {enlaceInicio ? (
+                            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                        ) : (
+                            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                        )}
+                        {enlaceMobile.etiqueta}
+                    </a>
                 )}
-            </AnimatePresence>
-        </nav>
+            </div>
+        </motion.nav>
     );
 }

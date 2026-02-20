@@ -69,7 +69,7 @@ export default function CaseStudiesV2({ items = CASES }: { items?: Case[] }) {
   return (
     <section
       id="casos-exito"
-      className="relative overflow-hidden bg-gradient-to-b from-[#0b0f14] to-[#111827] text-white"
+      className="relative overflow-hidden bg-gradient-to-b from-[#0d1219] to-[#111827] text-white"
     >
       {/* scanlines suaves */}
       <div
@@ -122,7 +122,7 @@ export default function CaseStudiesV2({ items = CASES }: { items?: Case[] }) {
                     {/* encabezado testimonial */}
                     <div className="mb-4 flex items-center gap-3">
                       <svg aria-hidden className="h-7 w-7 text-white/60" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M7.17 6C5.42 6 4 7.43 4 9.2c0 1.53 1.03 2.8 2.43 3.12-.5 2.08-1.66 3.83-3.43 5.25l1.7 1.93C6.7 18.13 8 15.84 8 13.2V6H7.17zm9.66 0C15.08 6 13.66 7.43 13.66 9.2c0 1.53 1.02 2.8 2.42 3.12-.49 2.08-1.65 3.83-3.42 5.25l1.69 1.93C18.36 18.13 19.66 15.84 19.66 13.2V6h-2.83z"/>
+                        <path d="M7.17 6C5.42 6 4 7.43 4 9.2c0 1.53 1.03 2.8 2.43 3.12-.5 2.08-1.66 3.83-3.43 5.25l1.7 1.93C6.7 18.13 8 15.84 8 13.2V6H7.17zm9.66 0C15.08 6 13.66 7.43 13.66 9.2c0 1.53 1.02 2.8 2.42 3.12-.49 2.08-1.65 3.83-3.42 5.25l1.69 1.93C18.36 18.13 19.66 15.84 19.66 13.2V6h-2.83z" />
                       </svg>
                       <span className="text-xs uppercase tracking-wide text-gray-400">Recomendación</span>
                     </div>

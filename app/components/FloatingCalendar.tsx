@@ -8,7 +8,7 @@ export default function FloatingCalendar() {
   useEffect(() => {
     const handleScroll = () => {
       // Ajusta este número si quieres que aparezca antes o después
-      setVisible(window.scrollY > 100); 
+      setVisible(window.scrollY > 100);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -19,6 +19,8 @@ export default function FloatingCalendar() {
     const section = document.getElementById("cta");
     if (section) {
       section.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.location.href = "/#cta";
     }
   };
 
@@ -28,7 +30,7 @@ export default function FloatingCalendar() {
         <motion.button
           onClick={scrollToBooking}
           // Animación ajustada para entrar desde la DERECHA (x: 50)
-          initial={{ opacity: 0, scale: 0.5, x: 50 }} 
+          initial={{ opacity: 0, scale: 0.5, x: 50 }}
           animate={{ opacity: 1, scale: 1, x: 0 }}
           exit={{ opacity: 0, scale: 0.5, x: 50 }}
           whileHover={{ scale: 1.1 }}

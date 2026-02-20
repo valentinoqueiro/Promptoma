@@ -74,18 +74,18 @@ export default function UseCases({ items = DEFAULT_ITEMS }: { items?: UseCase[] 
     // Aquí reseteamos el intervalo para que espere 5 segundos desde el click
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = window.setInterval(() => {
-        isInteracting.current = false;
-        setActive((prev) => {
-            const idx = ORDER.indexOf(prev);
-            return ORDER[(idx + 1) % ORDER.length];
-          });
+      isInteracting.current = false;
+      setActive((prev) => {
+        const idx = ORDER.indexOf(prev);
+        return ORDER[(idx + 1) % ORDER.length];
+      });
     }, DURATION_MS);
   };
 
   return (
     <motion.section
       id="casos-uso"
-      className="relative overflow-hidden bg-gradient-to-b from-[#0f141b] to-[#0b0f14] text-white"
+      className="relative overflow-hidden bg-[#0d1219] text-white"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
@@ -98,7 +98,7 @@ export default function UseCases({ items = DEFAULT_ITEMS }: { items?: UseCase[] 
         }}
       />
 
-      <motion.div className="relative mx-auto max-w-7xl px-6 py-24" variants={container}>
+      <motion.div className="relative mx-auto max-w-7xl px-6 pt-24 pb-8" variants={container}>
         <motion.header className="max-w-3xl" variants={fadeUp}>
           <p className="text-sm text-gray-400">Casos de uso</p>
           <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
@@ -186,8 +186,8 @@ export default function UseCases({ items = DEFAULT_ITEMS }: { items?: UseCase[] 
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                       >
-                         <span className="absolute -inset-3 rounded-full bg-[#7238E3] opacity-35 blur-2xl" />
-                         <span className="absolute inset-0 rounded-full bg-gradient-to-b from-[#bfa3ff]/25 to-transparent" />
+                        <span className="absolute -inset-3 rounded-full bg-[#7238E3] opacity-35 blur-2xl" />
+                        <span className="absolute inset-0 rounded-full bg-gradient-to-b from-[#bfa3ff]/25 to-transparent" />
                       </motion.span>
                     )}
                   </AnimatePresence>
@@ -199,7 +199,7 @@ export default function UseCases({ items = DEFAULT_ITEMS }: { items?: UseCase[] 
 
           {/* SECCIÓN DE TARJETAS (SOLUCIÓN DEL SALTO) */}
           <motion.div className="md:col-span-2 relative" variants={fadeUp}>
-            
+
             {/* TRUCO: Creamos un grid de 1 columna y 1 fila.
                Todos los grupos de tarjetas se colocan en la misma celda (row-start-1 col-start-1).
                El contenedor tomará la altura del grupo MÁS ALTO automáticamente y no variará.
@@ -208,13 +208,13 @@ export default function UseCases({ items = DEFAULT_ITEMS }: { items?: UseCase[] 
               {TAGS.map((tag) => {
                 const isActive = active === tag.key;
                 const categoryItems = items.filter(i => i.tag === tag.key);
-                
+
                 return (
                   <div
                     key={tag.key}
                     // 'col-start-1 row-start-1' apila todo en el mismo sitio
                     className={`col-start-1 row-start-1 grid gap-6 sm:grid-cols-2 transition-all duration-500 ease-in-out
-                      ${isActive 
+                      ${isActive
                         ? "opacity-100 translate-y-0 z-10" // Visible
                         : "opacity-0 translate-y-4 z-0 pointer-events-none" // Invisible pero ocupa espacio si fuera el más alto
                       }

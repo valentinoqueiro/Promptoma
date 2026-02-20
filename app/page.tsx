@@ -1,5 +1,6 @@
 import Hero from "./components/Hero";
 import Why from "./components/Why";
+import ChatbotsPromo from "./components/ChatbotsPromo";
 import UseCases from "./components/UseCases";
 import IntegrationsLite from "./components/IntegrationsLite";
 import CaseStudies from "./components/CaseStudies";
@@ -13,6 +14,7 @@ export default function Page() {
     <main>
       <Hero />
       <Why />
+      <ChatbotsPromo />
       <UseCases />
       <IntegrationsLite moreCount={500} />
       <CaseStudies />
