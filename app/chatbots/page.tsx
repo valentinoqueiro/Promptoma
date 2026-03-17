@@ -317,10 +317,10 @@ function ChatDemo() {
                             onClick={enviarMensaje}
                             className="group flex w-full items-center gap-3 rounded-xl bg-white/[0.04] px-4 py-2.5 ring-1 ring-white/[0.08] transition-all hover:bg-white/[0.06] hover:ring-violet-500/30 cursor-pointer"
                         >
-                            <span className="flex-1 text-left text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
+                            <span className="flex-1 text-left text-sm text-gray-300 group-hover:text-white transition-colors">
                                 {mensajeInteractivo.usuario}
                             </span>
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 shadow-lg shadow-violet-500/20 transition-transform group-hover:scale-110">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 shadow-lg shadow-violet-500/40 animate-pulse transition-transform group-hover:scale-110">
                                 <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M12 5l7 7-7 7" />
                                 </svg>
@@ -328,8 +328,8 @@ function ChatDemo() {
                         </button>
                     ) : (
                         <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] px-4 py-2.5 ring-1 ring-white/[0.08]">
-                            <span className="text-sm text-gray-500 flex-1">Escribe un mensaje...</span>
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 transition hover:from-violet-500 hover:to-violet-400">
+                            <span className="text-sm text-gray-300 flex-1">Escribe un mensaje...</span>
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 shadow-lg shadow-violet-500/40 animate-pulse transition hover:from-violet-500 hover:to-violet-400">
                                 <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                                 </svg>
@@ -749,10 +749,10 @@ function DemoCalificacion() {
                                         onClick={enviarMensaje}
                                         className="group flex w-full items-center gap-3 rounded-xl bg-white/[0.04] px-4 py-2.5 ring-1 ring-white/[0.08] transition-all hover:bg-white/[0.06] hover:ring-violet-500/30 cursor-pointer"
                                     >
-                                        <span className="flex-1 text-left text-[13px] text-gray-400 group-hover:text-gray-300 transition-colors">
+                                        <span className="flex-1 text-left text-[13px] text-gray-300 group-hover:text-white transition-colors">
                                             {mensajeInput}
                                         </span>
-                                        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 shadow-lg shadow-violet-500/20 transition-transform group-hover:scale-110">
+                                        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 shadow-lg shadow-violet-500/40 animate-pulse transition-transform group-hover:scale-110">
                                             <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7" />
                                             </svg>
@@ -760,9 +760,9 @@ function DemoCalificacion() {
                                     </button>
                                 ) : (
                                     <div className="flex items-center gap-3 rounded-xl bg-white/[0.03] px-4 py-2.5 ring-1 ring-white/[0.06]">
-                                        <span className="flex-1 text-[13px] text-gray-600">Escribe un mensaje...</span>
-                                        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/[0.06]">
-                                            <svg className="h-3.5 w-3.5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <span className="flex-1 text-[13px] text-gray-400">Escribe un mensaje...</span>
+                                        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/[0.06] shadow-lg shadow-violet-500/20 animate-pulse">
+                                            <svg className="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7" />
                                             </svg>
                                         </div>
@@ -1135,6 +1135,7 @@ export default function PaginaChatbots() {
                         </a>
                         <a
                             href="#cta-chatbots"
+                            onClick={() => { if (typeof window !== 'undefined' && typeof window.fbq === 'function') window.fbq('track', 'Lead'); }}
                             className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 px-8 py-3 text-base font-semibold shadow-lg shadow-violet-500/25 transition hover:from-violet-500 hover:to-violet-400 sm:w-auto md:px-10 md:py-4 md:text-lg"
                         >
                             Quiero mi chatbot
@@ -1298,7 +1299,7 @@ export default function PaginaChatbots() {
                             Volver al inicio
                         </a>
                         <button
-                            onClick={() => { window.location.href = "/#cta"; }}
+                            onClick={() => { if (typeof window !== 'undefined' && typeof window.fbq === 'function') window.fbq('track', 'Lead'); window.location.href = "/#cta"; }}
                             className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 px-8 py-3 text-base font-semibold shadow-lg shadow-violet-500/25 transition hover:from-violet-500 hover:to-violet-400 cursor-pointer sm:w-auto md:px-10 md:py-4 md:text-lg"
                         >
                             Agendar entrevista gratis

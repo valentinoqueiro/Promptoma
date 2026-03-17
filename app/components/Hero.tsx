@@ -678,6 +678,7 @@ export default function Hero() {
           </a>
           <a
             href="#cta"
+            onClick={() => { if (typeof window !== 'undefined' && typeof window.fbq === 'function') window.fbq('track', 'Lead'); }}
             className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 px-8 py-3 text-base font-semibold shadow-lg shadow-violet-500/25 transition hover:from-violet-500 hover:to-violet-400 sm:w-auto md:px-10 md:py-4 md:text-lg"
           >
             Agendar entrevista

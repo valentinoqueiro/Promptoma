@@ -100,8 +100,8 @@ export default function Navbar({
                     />
                 </a>
 
-                {/* Enlaces - Desktop: pastilla glassmorphism */}
-                <div className="hidden md:flex items-center gap-0.5 rounded-full bg-white/[0.04] px-1.5 py-1 ring-1 ring-white/[0.06]">
+                {/* Enlaces - Desktop: pastilla glassmorphism centrada absolutamente */}
+                <div className="hidden md:flex items-center gap-0.5 rounded-full bg-white/[0.04] px-1.5 py-1 ring-1 ring-white/[0.06] absolute left-1/2 -translate-x-1/2">
                     {enlaces.map((enlace) => {
                         const esActivo = enlaceActivo === enlace.href;
                         return (

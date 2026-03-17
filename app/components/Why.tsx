@@ -275,9 +275,9 @@ export default function Why({ benefits = DEFAULT_BENEFITS }: WhyProps) {
             ))}
           </motion.div>
 
-          {/* Center Column (Chart) */}
+          {/* Center Column (Chart) - Solo visible en desktop */}
           <motion.div
-            className="relative flex justify-center order-1 lg:order-2 py-8 lg:py-0"
+            className="relative hidden md:flex justify-center order-1 lg:order-2 py-8 lg:py-0"
             variants={fadeUp}
           >
             {/* Glow behind chart */}

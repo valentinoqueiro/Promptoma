@@ -146,8 +146,8 @@ function MiniChat() {
             {/* Input falso */}
             <div className="border-t border-white/[0.06] bg-white/[0.02] px-4 py-3">
                 <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] px-4 py-2 ring-1 ring-white/[0.08]">
-                    <span className="flex-1 text-sm text-gray-500">Escribe un mensaje...</span>
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-r from-violet-600 to-violet-500">
+                    <span className="flex-1 text-sm text-gray-300">Escribe un mensaje...</span>
+                    <div className="relative flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 shadow-lg shadow-violet-500/40 animate-pulse">
                         <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                         </svg>
