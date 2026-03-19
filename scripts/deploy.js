@@ -1,5 +1,5 @@
 // Script de deploy FTP a Hostinger
-// Carga .env.deploy, conecta al servidor y sube la carpeta out/
+// Carga .env.deploy, conecta al servidor FTP y sube la carpeta out/
 
 import * as ftp from "basic-ftp";
 import * as dotenv from "dotenv";
@@ -23,7 +23,7 @@ const carpetaLocal = path.join(raiz, "out");
 
 async function deploy() {
   const cliente = new ftp.Client();
-  cliente.ftp.verbose = false; // cambiar a true para ver detalles de cada operación
+  cliente.ftp.verbose = false; // cambiar a true para depurar
 
   console.log(`\n🚀 Iniciando deploy a ${FTP_HOST}...`);
 
@@ -39,15 +39,16 @@ async function deploy() {
 
     // Vaciar el directorio remoto de destino
     console.log(`⚠️  Limpiando ${FTP_REMOTE_DIR}...`);
+    await cliente.cd(FTP_REMOTE_DIR);
     await cliente.clearWorkingDir();
     console.log("✓ Directorio remoto limpiado.");
 
-    // Subir todo el contenido de out/ a /public_html/
+    // Subir todo el contenido de out/ a FTP_REMOTE_DIR
     console.log(`📤 Subiendo archivos desde out/ a ${FTP_REMOTE_DIR}...`);
     await cliente.uploadFromDir(carpetaLocal, FTP_REMOTE_DIR);
 
     console.log("\n✅ Deploy completado con éxito.");
-    console.log(`   Sitio disponible en: http://${FTP_HOST}\n`);
+    console.log("   Sitio disponible en: https://promptoma.com\n");
   } catch (error) {
     console.error("\n❌ Error durante el deploy:", error);
     process.exit(1);
