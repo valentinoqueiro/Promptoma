@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# videos grandes
+*.mp4
+
+# credenciales de deploy (nunca subir al repo)
+.env.deploy
