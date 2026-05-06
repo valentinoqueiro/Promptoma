@@ -304,7 +304,6 @@ function VideoPlayer({ src }: { src: string }) {
 
       <video
         ref={videoRef}
-        src={src}
         autoPlay
         loop
         muted={isMuted}
@@ -313,6 +312,8 @@ function VideoPlayer({ src }: { src: string }) {
         style={{ borderRadius: "inherit" }}
         onClick={hasUnmuted ? togglePlay : handleUnmute}
       >
+        <source src={src.replace(/\.mp4$/, ".webm")} type="video/webm" />
+        <source src={src} type="video/mp4" />
         Tu navegador no soporta la reproducción de video.
       </video>
 
