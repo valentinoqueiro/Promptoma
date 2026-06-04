@@ -24,6 +24,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Promptoma",
   description: "Automatizaciónes + IA",
+  other: {
+    "facebook-domain-verification": "xezt6bmwyzeu9tygc2d6awir9227py",
+  },
 };
 
 export default function RootLayout({
